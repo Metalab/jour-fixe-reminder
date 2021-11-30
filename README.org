@@ -1,0 +1,15 @@
+#+TITLE: Jour Fixe Announcement Bot
+
+* Automating tedious tasks? In a hackerspace? After 15 years?
+
+This is /now/ *possible*. All you need is a working installation of ruby and bundler.
+
+To install, simply run ~bundler~ in the directory to install necessary gems (nokogiri and mail) and their dependencies.
+
+To configure, change the necessary information in the config.yml file. The ones you will want to touch are the email (SMTP) related ones, also please don't send any email to Chomsky, he has seen enough. The SMTP client is straightforward to configure, provide it with the server url, port, username and password to the mail account you want to send announcements from. The authentication method used for most servers should be fine as ~:login~, but if this does not work, you might want to try ~:plain~ or ~:cram_md5~. (but really you shouldn't, jesus)
+
+To run, simply run ~bundler exec script.rb~. The script will write to a temporary file to save the remote calendar file, so make sure that it has read-write permissions wherever you run it. It will complain if it can't, so pay attention on the first run.
+
+** Caveats
+
+If this is run by a cronjob don't run it in the last minute before midnight, as then the change of date might screw with the dumb date checking logic if your calendar endpoint is sufficiently slow. (is this a MOS problem? i don't know)
