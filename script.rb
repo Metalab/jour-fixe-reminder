@@ -140,7 +140,7 @@ def main
 
   # For each eligible event, check if the date is 3 days from now
   jour_fixes.each do |jour_fixe|
-    if jour_fixe.date >= Date.today + 3 && jour_fixe.date < Date.today + 18
+    if jour_fixe.date >= Date.today + 2 && jour_fixe.date < Date.today + 3
 
       # interpolate the (meta)data with the message template and send per mail
       message_body =  config[:message_template] % jour_fixe_scraper(jour_fixe)
