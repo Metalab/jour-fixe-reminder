@@ -1,0 +1,19 @@
+PATH=/usr/local/bundle/bin:/usr/local/bundle/gems/bin:/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+BUNDLE_APP_CONFIG=/usr/local/bundle
+RUBY_VERSION=3.1.2
+GEM_HOME=/usr/local/bundle
+LANG=C.UTF-8
+LC_CTYPE="C.UTF-8"
+LC_NUMERIC="C.UTF-8"
+LC_TIME="C.UTF-8"
+LC_COLLATE="C.UTF-8"
+LC_MONETARY="C.UTF-8"
+LC_MESSAGES="C.UTF-8"
+LC_PAPER="C.UTF-8"
+LC_NAME="C.UTF-8"
+LC_ADDRESS="C.UTF-8"
+LC_TELEPHONE="C.UTF-8"
+LC_MEASUREMENT="C.UTF-8"
+LC_IDENTIFICATION="C.UTF-8"
+
+0 4 * * * /var/jfbot/run.sh >> /var/log/jfbot.log 2>&1

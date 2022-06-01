@@ -3,10 +3,12 @@
 require 'yaml'
 require 'strscan'
 require 'date'
-require 'URI'
+require 'uri'
 require 'open-uri'
 require 'nokogiri'
 require 'mail'
+require 'optparse'
+require 'ostruct'
 
 # The event struct used to hold the Event metadata which is then used to scrape
 # events happening in the near future
@@ -17,7 +19,7 @@ Event = Struct.new(:name, :date, :url, :location)
 # metadata to an array of possible events
 # This function uses the fact that the .ics file is ordered by date, in order future -> past,
 # which it uses to short circuit the execution once we find an event in the past.
-def parse_calendar(filename, events = ["Jour Fixe"])
+def parse_calendar(filename, options, events = ["Jour Fixe"])
   # String scanner lets us search a string in a fast manner using regex matches with captures
   # to extract metadata fast
   s = StringScanner.new(File.read(filename))
@@ -46,7 +48,7 @@ def parse_calendar(filename, events = ["Jour Fixe"])
 
     # Here we break the loop if we find a past event, as no more future events
     # will be found as the ics is sorted by date.
-    if jour_fixe.date < Date.today
+    if jour_fixe.date < Date.today && !options.testing
       break
     else
       jour_fixes.append(jour_fixe)
@@ -122,7 +124,7 @@ def jour_fixe_scraper(event)
 end
 
 
-def main
+def main(options)
   # load the config and set up the smtp client's data
   config = YAML.load_file('config.yml')
   Mail.defaults do
@@ -136,11 +138,11 @@ def main
   end
 
   # get all jour fixes that happen in the future
-  jour_fixes = parse_calendar(config[:local_filename])
+  jour_fixes = parse_calendar(config[:local_filename], options)
 
   # For each eligible event, check if the date is 3 days from now
   jour_fixes.each do |jour_fixe|
-    if jour_fixe.date >= Date.today + 2 && jour_fixe.date < Date.today + 3
+    if (jour_fixe.date >= Date.today + 2 && jour_fixe.date < Date.today + 3) || (options.testing && jour_fixe.date <= Date.today)
 
       # interpolate the (meta)data with the message template and send per mail
       message_body =  config[:message_template] % jour_fixe_scraper(jour_fixe)
@@ -154,8 +156,12 @@ def main
         subject "Metalab Jour Fixe Reminder"
         body message_body
       end
+
+      exit 0
     end
   end
+
+  puts "No Jour Fixe in the next 3 days, will check again tomorrow"
 
   # clean up after ourselves
   File.delete(config[:local_filename]) if File.exist? config[:local_filename]
@@ -163,5 +169,12 @@ end
 
 
 if __FILE__ == $0
-  main
+
+  # parse options from the command line
+  options = OpenStruct.new
+  OptionParser.new do |opt|
+    opt.on('-t', '--test-mail', 'Test by fetching the calendar and sending an email announcing the next Jour Fixe') { |o| options.testing = true }
+  end.parse!
+
+  main(options)
 end
