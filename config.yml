@@ -7,16 +7,23 @@
 
 :message_template: |
   Hello all!
+
   The next Jour Fixe is coming up and will be held on %s at %s.
+
   The following reports and topics will be discussed:
+
   Reports:
   %s
   Topics:
   %s
+
   Beep boop,
   OwObot
+
   [0] %s
   [1] If you want to have annoncements for your event added, please open an issue at https://github.com/Metalab/jour-fixe-reminder
+
+
 :mail_options:
   :address: your.email.server
   :port: 1337
